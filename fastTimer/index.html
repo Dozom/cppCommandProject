@@ -7,13 +7,41 @@
     <title>Timer in LocalStorage</title>
 </head>
 <style>
+    body {
+        background-color: #e1e1e1;
+    }
+
+    .title {
+        text-align: center;
+        color: white;
+        background-color: rgb(82, 126, 82);
+    }
+
     .highlight {
         background-color: green;
         transition: background-color 0.5s ease;
     }
+
+    .task_title {
+        background-color: rgb(125, 176, 125);
+        font-weight: bolder;
+        font-size: large;
+    }
+
+    .task_content {
+        display: flex;
+        background-color: rgb(199, 233, 199);
+    }
+
+    .task_content p {
+        flex: 1;
+        border: 1px solid black;
+        text-align: center;
+    }
 </style>
 
-<body onload="startTimer()">
+<body>
+    <h1 class="title">Task Manager</h1>
     <label for="tasks">
         Task:
         <input type="text" name="task" id="task">
@@ -31,7 +59,7 @@
         }, 500);
     }
     function startTimer() {
-        alert(new Date());
+
     }
 
     function entryTimer() {
@@ -57,7 +85,7 @@
                 "task": document.getElementById("task").value
             };
             let tmp = JSON.parse(timer);
-            tmp.push(tmpTime);
+            tmp.unshift(tmpTime);
             localStorage.setItem(key, JSON.stringify(tmp));
         }
 
@@ -73,11 +101,18 @@
         if (timerData) {
             timerData.forEach(data => {
                 let div = document.createElement("div");
+                let minutes = (parseFloat(data.wasted.split(':')[1]) / 60);
+                let hours = (parseFloat(data.wasted.split(':')[1]) / 3600);
                 div.innerHTML = `
-                        <p>Task: ${data.task}</p>
+                        <p class='task_title'>Task: ${data.task}</p>
+                        <div class='task_content'>
                         <p>Start Time: ${data.start_time}</p>
                         <p>End Time: ${data.end_time}</p>
-                        <p>Wasted Time: ${data.wasted}</p>
+                        <p>Wasted Time In Seconds: ${data.wasted.split(':')[1]}</p>
+                        <p>Wasted Time In Minutes: ${minutes}</p>
+                        <p>Wasted Time In Hours: ${hours}</p>
+                        <p>Wasted Time <br> Hours: ${Math.trunc(hours)} Minutes: ${Math.trunc(minutes - (Math.trunc(hours) * 60))}</p>
+                        </div>
                         <hr>
                     `;
                 timerDataContainer.appendChild(div);
