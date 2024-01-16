@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer in LocalStorage</title>
+</head>
+<style>
+    .highlight {
+        background-color: green;
+        transition: background-color 0.5s ease;
+    }
+</style>
+
+<body onload="startTimer()">
+    <label for="tasks">
+        Task:
+        <input type="text" name="task" id="task">
+    </label>
+    <button onclick="entryTimer()"> Pause Timer </button>
+    <div id="timerData"></div>
+</body>
+<script>
+    let timer_start = new Date();
+    function highlightInput() {
+        let input = document.getElementById("task");
+        input.classList.add("highlight");
+        setTimeout(() => {
+            input.classList.remove("highlight");
+        }, 500);
+    }
+    function startTimer() {
+        alert(new Date());
+    }
+
+    function entryTimer() {
+        highlightInput();
+        let key = "timer";
+        let timer_end = new Date();
+        let tmpTime;
+        let timer = localStorage.getItem(key);
+
+        if (!timer) {
+            tmpTime = [{
+                "start_time": timer_start,
+                "end_time": timer_end,
+                "wasted": `seconds wasted: ${(timer_end - timer_start) / 1000}`,
+                "task": document.getElementById("task").value
+            }];
+            localStorage.setItem(key, JSON.stringify(tmpTime));
+        } else {
+            tmpTime = {
+                "start_time": timer_start,
+                "end_time": timer_end,
+                "wasted": `seconds wasted: ${(timer_end - timer_start) / 1000}`,
+                "task": document.getElementById("task").value
+            };
+            let tmp = JSON.parse(timer);
+            tmp.push(tmpTime);
+            localStorage.setItem(key, JSON.stringify(tmp));
+        }
+
+        timer_start = new Date();
+        displayTimerData();
+    }
+    function displayTimerData() {
+        let key = "timer";
+        let timerData = JSON.parse(localStorage.getItem(key));
+        let timerDataContainer = document.getElementById("timerData");
+        timerDataContainer.innerHTML = ""; // Clear previous content
+
+        if (timerData) {
+            timerData.forEach(data => {
+                let div = document.createElement("div");
+                div.innerHTML = `
+                        <p>Task: ${data.task}</p>
+                        <p>Start Time: ${data.start_time}</p>
+                        <p>End Time: ${data.end_time}</p>
+                        <p>Wasted Time: ${data.wasted}</p>
+                        <hr>
+                    `;
+                timerDataContainer.appendChild(div);
+            });
+        }
+    }
+
+    // Initial display on page load
+    displayTimerData();
+</script>
+
+</html>
