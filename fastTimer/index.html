@@ -62,6 +62,7 @@
     <button onclick="regressiveTimer(30, 0, 0)"> 30 minutes </button>
     <button onclick="nifValidator()"> validate nif </button>
     <button onclick="downloadMolokai()"> Download molokai</button>
+    <button onclick="colorpicker()"> Color Picker </button>
     <div id="timerData"></div>
 </body>
 <script>
@@ -123,6 +124,15 @@
         timer_start = new Date();
         displayTimerData();
     }
+	
+    // Function to implement a color picker
+
+    function colorpicker(){
+	 window.open("https://www.google.com/search?q=color+picker");
+    }
+
+
+
 
     // Function to display the timer data in the screen
     function displayTimerData() {
