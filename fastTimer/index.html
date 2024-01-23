@@ -55,6 +55,11 @@
         Task:
         <input type="text" name="task" id="task">
     </label>
+    <label for="Properties">
+        Append the properties of the method:
+        <textarea cols="30" rows="10" type="text" name="properties" id="properties"></textarea>
+    </label>
+
     <button onclick="entryTimer()"> Pause Timer </button>
     <button onclick="regressiveTimer(5, 0, 0)"> 5 minutes </button>
     <button onclick="regressiveTimer(10, 0, 0)"> 10 minutes </button>
@@ -63,6 +68,8 @@
     <button onclick="nifValidator()"> validate nif </button>
     <button onclick="downloadMolokai()"> Download molokai</button>
     <button onclick="colorpicker()"> Color Picker </button>
+    <button onclick="copyJSONAssertion()"> Copy JSON Assertion </button>
+    <button onclick="copyXMLAssertion()"> Copy XML Assertion </button>
     <div id="timerData"></div>
 </body>
 <script>
@@ -165,7 +172,49 @@
     }
 
     function downloadMolokai(){
-	navigator.clipboard.writeText("curl -G https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim -o molokai.vim\ncp monokai.vim colors")
+    	navigator.clipboard.writeText("curl -G https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim -o molokai.vim\ncp monokai.vim colors")
+    }
+
+    function copyXMLAssertion(){
+        let properties = document.getElementById("properties").value;
+        let content = properties.split("\n");
+
+        // Parse properties
+        let propsVariables = ""
+        content.map( (item) => {
+            propsVariables+="def "+item+" = context.('${Properties#"+item+"}')\n";
+        })
+
+        let propsAssertions = "def prefix = \"test.\"\n"
+
+        content.map( (item) => {
+            propsAssertions+="assert holder.getNodeValue('//'+prefix+'"+item+"') == "+item+";\n";
+        })
+        result = propsVariables+propsAssertions
+    	navigator.clipboard.writeText("import com.eviware.soapui.support.XmlHolder\ndef holder = new XmlHolder( messageExchange.responseContentAsXml)\n"+result)
+
+    }
+
+    // assert jsonSlurper.data.test == context.('${Properties#test}')
+
+
+    function copyJSONAssertion(){
+        let properties = document.getElementById("properties").value;
+        let content = properties.split("\n");
+
+        // Parse properties
+        let propsVariables = ""
+        content.map( (item) => {
+            propsVariables+="def "+item+" = context.('${Properties#"+item+"}')\n";
+        })
+
+        let propsAssertions = "def prefix = \"test.\"\n"
+
+        content.map( (item) => {
+            propsAssertions+="assert jsonSlurper.data."+item+" = context.('${Properties#"+item+"}')\n";
+        })
+ 
+        navigator.clipboard.writeText("import groovy.json.JsonSlurper\ndef ResponseMessage = messageExchange.response.responseContent\ndef jsonSlurper = new JsonSlurper().parseText(ResponseMessage)\n// Validations\nassert jsonSlurper.status == '0'\n// Assertions in ASC order\nassert jsonSlurper.data.size() > 0\n"+propsAssertions);
     }
 
     // Initial display on page load
