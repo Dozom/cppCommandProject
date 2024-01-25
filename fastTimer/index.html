@@ -93,12 +93,14 @@
         <button onclick="copyXMLAssertion()"> Copy XML Assertion </button>
         <button onclick="copyJSONRequest()"> Copy JSON Request </button>    
         <button onclick="copyCopiesScriptBat()"> Fast Backup Template </button>
+        <button onclick="copySQLScriptInit()"> SQL Script Init </button>
     </div>
     <div id="timerData"></div>
 </body>
 <script>
     let timer_start = new Date();
     let estimated = 0;
+
     // Function to highlight the input when saved task
     function highlightInput() {
         let input = document.getElementById("task");
@@ -281,6 +283,24 @@
         REM GENERAR FITXER AMB EL TEMPS QUE HA TRIGAT A FER-HO TOT\n
         echo Start time: !START_TIME! > TEMPS_COPIA%FECHA_ACTUAL%.txt\n
         echo End time: !END_TIME! >> TEMPS_COPIA%FECHA_ACTUAL%.txt`);
+    }
+
+    // Function to copy sql script
+    function copySQLScriptInit() {
+        navigator.clipboard.writeText(`import groovy.sql.Sql
+// Driver properties
+def props = [user: context.expand(\'\${#Project#userdb}'), 
+        password: context.expand(\'\${#Project#userdbpw}'), 
+        allowMultiQueries: 'true'] as Properties
+                
+def connectionString = context.('\${#Project#jdbcConnectionString}')
+def driver = context.('\${#Project#driver}')
+
+// Create sql connection
+def sql = Sql.newInstance(connectionString, props, driver)
+
+// Execute sql
+sql.execute \"\"\"\n\"\"\"`);
     }
 
 
