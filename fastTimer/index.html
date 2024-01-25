@@ -70,7 +70,8 @@
     <button onclick="colorpicker()"> Color Picker </button>
     <button onclick="copyJSONAssertion()"> Copy JSON Assertion </button>
     <button onclick="copyXMLAssertion()"> Copy XML Assertion </button>
-    <button onclick="copyJSONRequest()"> Copy JSON Request </button>
+    <button onclick="copyJSONRequest()"> Copy JSON Request </button>    
+    <button onclick="copyCopiesScriptBat()"> Fast Backup Template </button>
     <div id="timerData"></div>
 </body>
 <script>
@@ -230,6 +231,36 @@
  
         navigator.clipboard.writeText("import groovy.json.JsonSlurper\ndef ResponseMessage = messageExchange.response.responseContent\ndef jsonSlurper = new JsonSlurper().parseText(ResponseMessage)\n// Validations\nassert jsonSlurper.status == '0'\n// Assertions in ASC order\nassert jsonSlurper.data.size() > 0\n"+propsAssertions);
     }
+
+    // Function to fast Backup with batch files
+    function copyCopiesScriptBat() {
+        navigator.clipboard.writeText(`@echo off\n
+        set START_TIME=%TIME%\n
+
+        setlocal enabledelayedexpansion\n
+        set FECHA_ACTUAL=%DATE%\n
+        call set FECHA_ACTUAL=!FECHA_ACTUAL:/=-!\n
+
+        set PATH=%PATH%;C:\\Program Files (x86)\\7-Zip\\\n
+
+        7z a copia%FECHA_ACTUAL%TESTQA.7z "C:\\TEST"\n
+
+        REM COPIAR ARXIUS ALS SERVIDORS
+        COPY "C:\\USERS\\USER1\\copia%FECHA_ACTUAL%TESTQA.7z" "D:\\COPIATEST\\latestcopy.7z"\n
+
+        REM ESBORRAR ARXIUS .TMP I .7Z DE FA +3 DIES A LA RUTA DEL SCRIPT\n
+        REM ESBORRAR TAMBE LA ULTIMA COPIA DE AQUEST SERVER, JA QUE ESTA COPIAT\n
+        forfiles /P C:\\USERS\\USER1\\ /M copia%FECHA_ACTUAL%TEST*.7z /C "cmd /c del @path" \n
+        forfiles /P C:\\USERS\\USER1\\ /M *.tmp* /C "cmd /c del @path" \n
+        forfiles /P C:\\USERS\\USER1\\ /M *.7z /D -3 /C "cmd /c del @path"\n
+
+        set END_TIME=%TIME%\n
+
+        REM GENERAR FITXER AMB EL TEMPS QUE HA TRIGAT A FER-HO TOT\n
+        echo Start time: !START_TIME! > TEMPS_COPIA%FECHA_ACTUAL%.txt\n
+        echo End time: !END_TIME! >> TEMPS_COPIA%FECHA_ACTUAL%.txt`);
+    }
+
 
     // Initial display on page load
     displayTimerData();
