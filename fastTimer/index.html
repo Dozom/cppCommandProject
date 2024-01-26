@@ -94,6 +94,7 @@
         <button onclick="copyJSONRequest()"> Copy JSON Request </button>    
         <button onclick="copyCopiesScriptBat()"> Fast Backup Template </button>
         <button onclick="copySQLScriptInit()"> SQL Script Init </button>
+        <button onclick="obtainLatestCommitsFromDate()"> Obtain Latest Commits since Date to actual date USAGE: date \n project_path</button>
     </div>
     <div id="timerData"></div>
 </body>
@@ -303,7 +304,14 @@ def sql = Sql.newInstance(connectionString, props, driver)
 sql.execute \"\"\"\n\"\"\"`);
     }
 
+    function obtainLatestCommitsFromDate() {
+        let properties = document.getElementById("properties").value;
+        let content = properties.split("\n");
 
+        let start_date = content[0];
+        let project_path = content[1];
+        navigator.clipboard.writeText("cd \""+project_path+"\" git log --oneline --since=\""+start_date+"\"");
+    }
     // Initial display on page load
     displayTimerData();
 $(document).ready(function(){
