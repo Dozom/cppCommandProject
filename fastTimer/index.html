@@ -95,7 +95,8 @@
         <button onclick="copyCopiesScriptBat()"> Fast Backup Template </button>
         <button onclick="copySQLScriptInit()"> SQL Script Init </button>
         <button onclick="obtainLatestCommitsFromDate()"> Obtain Latest Commits since Date to actual date USAGE: date \n project_path</button>
-        <button onclick="copyMockScriptGet()"> Mock Script Get </button>        
+        <button onclick="copyMockScriptGet()"> Mock Script Get </button>   
+        <button onclick="generateReleaseNotes()">Generate Notes through text</button>
     </div>
     <div id="timerData"></div>
 </body>
@@ -364,6 +365,7 @@ def sql = Sql.newInstance(connectionString, props, driver)
 sql.execute \"\"\"\n\"\"\"`);
     }
 
+    // Function to obtain latest commits from date
     function obtainLatestCommitsFromDate() {
         let properties = document.getElementById("properties").value;
         let content = properties.split("\n");
@@ -373,6 +375,17 @@ sql.execute \"\"\"\n\"\"\"`);
         navigator.clipboard.writeText("cd \""+project_path+"\" git log --oneline --since=\""+start_date+"\"");
     }
 
+    // Function to generate a Sample of release notes through an index
+    function generateReleaseNotes() {
+        raw_release = document.getElementById("properties").value;
+        let lines = raw_release.split('\n');
+        let result = "NOTES DE LA VERSIÓ <version>: \n";
+        for (let item in lines) {
+            result += "- " + lines[item] + "\n";
+        }        
+
+        navigator.clipboard.writeText(result);
+    }
 
 
     // Initial display on page load
